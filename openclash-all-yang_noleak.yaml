@@ -37,12 +37,13 @@ secret: "123456"
 # ========================
 # DNS 设置
 # ========================
+
 dns:
   enable: true
   listen: 0.0.0.0:7874
   ipv6: false
   enhanced-mode: fake-ip
-  fake-ip-range: 198.20.0.1/16
+  fake-ip-range: 198.18.0.1/16
 
   use-hosts: true
   respect-rules: true
@@ -51,19 +52,24 @@ dns:
     - 223.5.5.5
     - 119.29.29.29
 
+  # 代理节点域名解析：加密 DNS，直接连接
   proxy-server-nameserver:
-    - 223.5.5.5
-    - 119.29.29.29
+    - "https://dns.alidns.com/dns-query#DIRECT"
+    - "https://doh.pub/dns-query#DIRECT"
 
+  # 普通海外域名：强制走自动代理节点
   nameserver:
-    - https://1.1.1.1/dns-query
-    - https://dns.google/dns-query
+  #  - "https://1.1.1.1/dns-query#PROXY"
+  #  - "https://8.8.8.8/dns-query#proxy"
+    - "https://1.1.1.1/dns-query#所有-自动"
+    - "https://8.8.8.8/dns-query#所有-自动"
 
+  # 国内域名：使用国内加密 DNS
   nameserver-policy:
     "geosite:cn":
-      - https://dns.alidns.com/dns-query
-      - https://doh.pub/dns-query
-    
+      - "https://dns.alidns.com/dns-query#DIRECT"
+      - "https://doh.pub/dns-query#DIRECT"
+
   fake-ip-filter-mode: blacklist
   fake-ip-filter:
     - +.lan
@@ -326,7 +332,7 @@ proxy-groups:
 # 规则引擎（rules）
 # ========================
 rules:
-
+  - DOMAIN-SUFFIX,thzu.cc,国外
   - RULE-SET,TEST-Domain,Test
   - RULE-SET,Block-Domain,Block  
   - RULE-SET,ChatGPT-Domain,ChatGPT
